@@ -39,6 +39,7 @@ class PrivacyPolicy extends StatelessWidget {
                       text: '1. Introduction\n\n',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
+                        
                       ),
                     ),
                     TextSpan(
