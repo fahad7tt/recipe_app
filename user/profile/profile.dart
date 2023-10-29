@@ -4,13 +4,13 @@ import 'package:recipe_app/const/color.dart';
 import 'package:recipe_app/database/adapter/hive_adapter.dart';
 import 'package:recipe_app/database/model/recipe_model.dart';
 import 'package:recipe_app/user/login.dart';
+import 'package:recipe_app/user/profile/privacy_policy.dart';
 import 'package:recipe_app/user/users_home.dart';
 import 'package:recipe_app/widget/appbar_widget.dart';
 import 'package:recipe_app/widget/cutom_list.dart';
 import 'package:recipe_app/widget/profile_avatar.dart';
 import 'package:recipe_app/widget/profile_text.dart';
 import 'app_info.dart';
-import 'privacy_policy.dart';
 import 'terms.dart';
 
 class UserProfile extends StatefulWidget {

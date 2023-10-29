@@ -81,7 +81,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter an email address';
                       } else if (!RegExp(
-                              r'^[A-Za-z][A-Za-z0-9._%+-]*@(gmail\.com|outlook\.com|company\.com)$')
+                              r'^[A-Za-z][A-Za-z0-9._%+-]*@(gmail\.com|outlook\.com|company\.com|inter\.com|hotmail\.com|yahoo\.com)$')
                           .hasMatch(value)) {
                         return 'Invalid email format or domain';
                       }
