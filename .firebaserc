@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "hosting": "recipe--application",
+    "default": "recipe--application"
+  },
+  "targets": {},
+  "etags": {}
+}
