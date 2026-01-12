@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "recipe--application",
     "public": "public",
     "ignore": [
       "firebase.json",

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Account | Recipe Book</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --bg-color: #f7f9fc;
+            --card-bg: #ffffff;
+            --text-color: #2d3436;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #636e72;
+        }
+
+        .warning {
+            background-color: #fff3f3;
+            color: #d63031;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #ee5253;
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #b2bec3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Account Deletion Request</h1>
+        <p>We're sorry to see you go. If you'd like to delete your account and all associated data from <strong>Recipe Book</strong>, please follow the instructions below.</p>
+        
+        <div class="warning">
+            Note: Deleting your account will permanently remove your saved recipes, favorites, and profile information. This action cannot be undone.
+        </div>
+
+        <p>Since your data is stored locally on your device (using Hive), you can delete everything immediately by <strong>clearing the app storage</strong> in your phone settings or using the <strong>Reset App</strong> option in the profile menu.</p>
+
+        <p>For any further data deletion requests, please contact us at:</p>
+        
+        <a href="mailto:ttfahad2317@gmail.com" class="btn">Email Support</a>
+
+        <div class="footer">
+            &copy; 2026 Recipe Book App. All Rights Reserved.
+        </div>
+    </div>
+</body>
+</html>
