@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/widget/appbar_widget.dart';
-
 import 'profile.dart';
 
 class AppInfo extends StatelessWidget {
@@ -12,7 +11,7 @@ class AppInfo extends StatelessWidget {
       home: Scaffold(
         appBar: CustomAppBar(
         title: 'App Info',
-        icon: Icons.arrow_back_ios, // Back arrow icon
+        icon: Icons.arrow_back_ios,
         onPressed: () {
           Navigator.push(
                 context,
