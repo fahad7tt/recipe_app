@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:flutter/material.dart' hide CarouselController;
+import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:recipe_app/const/color.dart';
@@ -34,21 +34,12 @@ class ImagePreviewPage extends StatefulWidget {
 }
 
 class _ImagePreviewPageState extends State<ImagePreviewPage> {
-  final CarouselController _carouselController = CarouselController();
+  final CarouselSliderController _carouselController =
+      CarouselSliderController();
   int _currentIndex = 0;
   String _currentImageUrl = '';
-  final TextEditingController _userReviewController = TextEditingController();
   String username = '';
   List<String> userReviews = [];
-
-  void _loadUserReviews() async {
-    final reviewsBox = await Hive.openBox<List<String>>('userReviews');
-    final reviews = reviewsBox.get(widget.itemName, defaultValue: []);
-
-    setState(() {
-      userReviews = reviews!;
-    });
-  }
 
   @override
   void initState() {
@@ -56,7 +47,6 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
     _currentIndex = widget.initialIndex;
     _currentImageUrl = widget.imageUrls[widget.initialIndex];
     _loadUserProfileData();
-    _loadUserReviews(); // Load user reviews when the page is initialized.
   }
 
   void _loadUserProfileData() async {
@@ -66,60 +56,6 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
     setState(() {
       username = signupDetails!.username;
     });
-  }
-
-  void _submitUserReview() async {
-    String userReview = _userReviewController.text;
-    if (userReview.isNotEmpty) {
-      // Store the review in Hive
-      final reviewsBox = await Hive.openBox<List<String>>('userReviews');
-      final reviews = reviewsBox.get(widget.itemName, defaultValue: []);
-      reviews?.add(userReview);
-      reviewsBox.put(widget.itemName, reviews!);
-
-      setState(() {
-        userReviews = reviews;
-      });
-
-      _userReviewController.clear();
-    }
-  }
-
-  void _deleteUserReview(int index) async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Delete Review"),
-          content: const Text("Are you sure you want to delete this review?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                // Delete the review from Hive
-                final reviewsBox = Hive.box<List<String>>('userReviews');
-                final reviews =
-                    reviewsBox.get(widget.itemName, defaultValue: []);
-                reviews?.removeAt(index);
-                reviewsBox.put(widget.itemName, reviews!);
-
-                setState(() {
-                  userReviews = reviews;
-                });
-
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text("Delete"),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -280,64 +216,6 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 18.0),
-                  const Divider(
-                    thickness: 2,
-                  ),
-                  const SizedBox(height: 18.0),
-
-                  // Review
-                  const Text(
-                    'Review',
-                    style: TextStyle(
-                      color: titleColor,
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  TextFormField(
-                    controller: _userReviewController,
-                    decoration: InputDecoration(
-                      hintText: 'Write your review here',
-                      // Remove the box and use an underline
-                      border: const UnderlineInputBorder(),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Theme.of(context).primaryColor),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: _submitUserReview,
-                      child: const Text('Submit Review'),
-                    ),
-                  ),
-                  // Display user reviews
-                  if (userReviews.isNotEmpty)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const SizedBox(height: 40.0),
-                        Column(
-                          children: userReviews.asMap().entries.map((entry) {
-                            final index = entry.key;
-                            final review = entry.value;
-                            return ListTile(
-                              title: Text(review,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500)),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () => _deleteUserReview(index),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    )
                 ],
               ),
             ),

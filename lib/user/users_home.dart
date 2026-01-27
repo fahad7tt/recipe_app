@@ -5,7 +5,9 @@ import 'package:recipe_app/database/functions/db_functions.dart';
 import 'package:recipe_app/database/model/recipe_model.dart';
 import 'package:recipe_app/user/user_drawer.dart';
 import 'package:recipe_app/widget/appbar_widget.dart';
-import 'package:recipe_app/widget/home_widget_copy.dart';
+import 'package:recipe_app/widget/unified_components.dart';
+import 'package:recipe_app/crud/add_recipe.dart';
+import 'package:recipe_app/widget/floating_action_button.dart';
 
 class UsersHomePage extends StatefulWidget {
   final Box<Recipe> recipesBox;
@@ -22,62 +24,42 @@ class UsersHomePage extends StatefulWidget {
 class _UsersHomePageState extends State<UsersHomePage> {
   String searchQuery = '';
   List<Recipe> recipes = [];
-  int currentIndex = 0;
   String selectedCategory = 'All';
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<bool> isFavoriteList = [];
 
   @override
   void initState() {
     super.initState();
-    recipes = widget.recipesBox.values.toList();
-    isFavoriteList = recipes.map((recipe) => recipe.isFavorite).toList();
+    _loadRecipes();
   }
 
-  void addRecipe(Recipe recipe) {
+  void _loadRecipes() {
     setState(() {
-      recipes.add(recipe);
-      DatabaseUtils.addRecipe(widget.recipesBox, recipe);
+      recipes = widget.recipesBox.values.toList();
     });
   }
 
   void updateRecipeInBox(Recipe recipe, Recipe newRecipe) {
     int index = recipes.indexOf(recipe);
     if (index != -1) {
-      setState(() {
-        recipes[index] = newRecipe;
-      });
       DatabaseUtils.updateRecipe(widget.recipesBox, recipe, newRecipe);
+      _loadRecipes();
     }
   }
 
   void removeRecipeFromBox(Recipe recipe) {
-    setState(() {
-      recipes.remove(recipe);
-    });
     DatabaseUtils.removeRecipe(widget.recipesBox, recipe);
+    _loadRecipes();
   }
 
-  void updateSelectedCategory(String category) {
-    setState(() {
-      selectedCategory = category;
-    });
-  }
-
-  void toggleRecipeFavorite(Recipe recipe) {
-    setState(() {
-      recipe.toggleFavorite();
-      updateRecipeInBox(recipe, recipe);
-    });
-  }
-
-  List<Recipe> getFilteredUserRecipesByFirstLetter() {
+  List<Recipe> getFilteredRecipes() {
     return recipes.where((recipe) {
       final itemName = recipe.itemName.toLowerCase();
-      return (selectedCategory == 'All' ||
-              recipe.category == selectedCategory) &&
-          (searchQuery.isEmpty ||
-              itemName.startsWith(searchQuery.toLowerCase()));
+      final matchesCategory =
+          selectedCategory == 'All' || recipe.category == selectedCategory;
+      final matchesSearch =
+          searchQuery.isEmpty || itemName.contains(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
     }).toList();
   }
 
@@ -85,34 +67,42 @@ class _UsersHomePageState extends State<UsersHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Recipe Book',
+        title: 'My Recipes',
         icon: Icons.menu,
-        onPressed: () {
-          _scaffoldKey.currentState!.openDrawer();
-        },
+        onPressed: () => _scaffoldKey.currentState!.openDrawer(),
       ),
       key: _scaffoldKey,
       backgroundColor: primaryColor,
       drawer: const UserDrawer(),
-      body: HomeBody1(
+      body: UnifiedHomeBody(
         searchQuery: searchQuery,
         recipes: recipes,
         selectedCategory: selectedCategory,
-        onSearchQueryChanged: (value) {
-          setState(() {
-            searchQuery = value;
-          });
-        },
-        onCategorySelected: (category) {
-          setState(() {
-            selectedCategory = category;
-          });
-        },
-        getFilteredUserRecipesByFirstLetter:
-            getFilteredUserRecipesByFirstLetter,
+        isAdmin: true,
+        onSearchQueryChanged: (value) => setState(() => searchQuery = value),
+        onCategorySelected: (category) =>
+            setState(() => selectedCategory = category),
+        getFilteredRecipes: getFilteredRecipes,
         updateRecipeInBox: updateRecipeInBox,
         removeRecipeFromBox: removeRecipeFromBox,
       ),
+      floatingActionButton: CustomFloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddRecipe(
+                onRecipeAdded: (newRecipe) {
+                  widget.recipesBox.add(newRecipe);
+                  _loadRecipes();
+                },
+                recipesBox: widget.recipesBox,
+              ),
+            ),
+          );
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

@@ -5,7 +5,7 @@ import 'package:recipe_app/database/functions/db_functions.dart';
 import 'package:recipe_app/database/model/recipe_model.dart';
 import 'package:recipe_app/user/user_drawer.dart';
 import 'package:recipe_app/widget/appbar_widget.dart';
-import 'package:recipe_app/widget/home_widget_copy.dart';
+import 'package:recipe_app/widget/unified_components.dart';
 
 class FavoritePage extends StatefulWidget {
   final Box<Recipe> recipesBox;
@@ -22,66 +22,45 @@ class FavoritePage extends StatefulWidget {
 class _FavoritePageState extends State<FavoritePage> {
   String searchQuery = '';
   List<Recipe> recipes = [];
-  List<bool> isFavoriteList = [];
-  int currentIndex = 0;
   String selectedCategory = 'All';
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-    // Load recipes from the Hive box when the widget is initialized
-    recipes = widget.recipesBox.values.toList();
-
-    isFavoriteList = List.generate(recipes.length, (index) => false);
+    _loadRecipes();
   }
-  void updateSelectedCategory(String category) {
+
+  void _loadRecipes() {
     setState(() {
-      selectedCategory = category;
+      recipes = widget.recipesBox.values.toList();
     });
   }
+
   void updateRecipeInBox(Recipe recipe, Recipe newRecipe) {
     int index = recipes.indexOf(recipe);
     if (index != -1) {
-      setState(() {
-        recipes[index] = newRecipe;
-      });
       DatabaseUtils.updateRecipe(widget.recipesBox, recipe, newRecipe);
+      _loadRecipes();
     }
   }
+
   void removeRecipeFromBox(Recipe recipe) {
-    setState(() {
-      recipes.remove(recipe);
-    });
     DatabaseUtils.removeRecipe(widget.recipesBox, recipe);
+    _loadRecipes();
   }
 
-  List<Recipe> getFilteredFavoriteRecipes() {
+  List<Recipe> getFilteredRecipes() {
     return recipes.where((recipe) {
-      return recipe.isFavorite &&
-          (selectedCategory == 'All' || recipe.category == selectedCategory);
-    }).toList();
-  }
-
-  List<Recipe> getFilteredFavoriteRecipesByFirstLetter() {
-    return getFilteredFavoriteRecipes().where((recipe) {
+      if (!recipe.isFavorite) return false;
       final itemName = recipe.itemName.toLowerCase();
-      return recipe.isFavorite &&
-          (selectedCategory == 'All' || recipe.category == selectedCategory) &&
-          (searchQuery.isEmpty ||
-              itemName.startsWith(searchQuery.toLowerCase()));
+      final matchesCategory =
+          selectedCategory == 'All' || recipe.category == selectedCategory;
+      final matchesSearch =
+          searchQuery.isEmpty || itemName.contains(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
     }).toList();
   }
-
-  void removeRecipeFromFavorites(Recipe recipe) {
-  setState(() {
-    if (recipe.isFavorite) {
-      recipe.isFavorite = false;
-      // Update the recipe in the Hive box
-      updateRecipeInBox(recipe, recipe);
-    }
-  });
-}
 
   @override
   Widget build(BuildContext context) {
@@ -89,29 +68,20 @@ class _FavoritePageState extends State<FavoritePage> {
       appBar: CustomAppBar(
         title: 'Favorites',
         icon: Icons.menu,
-        onPressed: () {
-          _scaffoldKey.currentState!.openDrawer();
-        },
+        onPressed: () => _scaffoldKey.currentState!.openDrawer(),
       ),
       key: _scaffoldKey,
       backgroundColor: primaryColor,
       drawer: const UserDrawer(),
-      body: HomeBody1(
+      body: UnifiedHomeBody(
         searchQuery: searchQuery,
         recipes: recipes,
         selectedCategory: selectedCategory,
-        onSearchQueryChanged: (value) {
-          setState(() {
-            searchQuery = value;
-          });
-        },
-        onCategorySelected: (category) {
-          setState(() {
-            selectedCategory = category;
-          });
-        },
-        getFilteredUserRecipesByFirstLetter:
-            getFilteredFavoriteRecipesByFirstLetter,
+        isAdmin: false,
+        onSearchQueryChanged: (value) => setState(() => searchQuery = value),
+        onCategorySelected: (category) =>
+            setState(() => selectedCategory = category),
+        getFilteredRecipes: getFilteredRecipes,
         updateRecipeInBox: updateRecipeInBox,
         removeRecipeFromBox: removeRecipeFromBox,
       ),

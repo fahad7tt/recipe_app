@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:recipe_app/admin/admin_login.dart';
 import 'package:recipe_app/const/color.dart';
 import 'package:recipe_app/database/adapter/hive_adapter.dart';
 import 'package:recipe_app/database/model/recipe_model.dart';
@@ -151,34 +150,6 @@ class _LoginPageState extends State<LoginPage> {
                             },
                         ),
                       ],
-                    ),
-                  ),
-                  const SizedBox(height: 100.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AdminLogin(),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: secondaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                    ).copyWith(
-                      fixedSize: WidgetStateProperty.all(
-                        const Size(180.0, 44.0),
-                      ),
-                    ),
-                    child: const Text(
-                      'Go to Admin Portal',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.bold,
-                      ),
                     ),
                   ),
                 ],

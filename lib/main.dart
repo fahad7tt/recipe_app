@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:recipe_app/admin/admin_home.dart';
+import 'package:recipe_app/user/users_home.dart';
 import 'package:recipe_app/database/adapter/hive_adapter.dart';
 import 'package:recipe_app/database/model/recipe_model.dart';
 import 'package:recipe_app/onboarding.dart';
@@ -30,8 +30,10 @@ class MyApp extends StatelessWidget {
       routes: {
         '/second': (context) => const OnBoarding(),
         '/login': (context) => const LoginPage(),
-        '/home': (context) => HomePage(recipes: const [], recipesBox: Hive.box<Recipe>('recipesBox')),
-        '/all': (context) => HomePage(recipes: const [], recipesBox: Hive.box<Recipe>('recipesBox')),
+        '/home': (context) => UsersHomePage(
+            recipes: const [], recipesBox: Hive.box<Recipe>('recipesBox')),
+        '/all': (context) => UsersHomePage(
+            recipes: const [], recipesBox: Hive.box<Recipe>('recipesBox')),
       },
     );
   }
